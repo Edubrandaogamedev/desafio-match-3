@@ -24,15 +24,7 @@ public class GameController
         {
             for (int x = 0; x < newBoard[y].Count; x++)
             {
-                if (x > 1
-                    && newBoard[y][x].Key == newBoard[y][x - 1].Key
-                    && newBoard[y][x - 1].Key == newBoard[y][x - 2].Key)
-                {
-                    return true;
-                }
-                if (y > 1
-                    && newBoard[y][x].Key == newBoard[y - 1][x].Key
-                    && newBoard[y - 1][x].Key == newBoard[y - 2][x].Key)
+                if (Board.CheckMatches(newBoard, x, y))
                 {
                     return true;
                 }
