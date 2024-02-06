@@ -28,7 +28,7 @@ public class TileSpotView : MonoBehaviour
         _y = y;
     }
 
-    public void SetTile(TileView tile)
+    public void SetTileView(TileView tile)
     {
         tile.transform.SetParent(transform, false);
         tile.transform.position = transform.position;

@@ -7,9 +7,7 @@ using UnityEngine.UI;
 public class BoardView : MonoBehaviour
 {
     [SerializeField] private TileSpotView tileSpotPrefab;
-
-    [SerializeField] private TilePrefabRepository tilePrefabRepository;
-
+    [SerializeField] private TileView tileViewPrefab;
     [SerializeField] private GridLayoutGroup boardContainer;
 
     private TileSpotView[][] _tileSpots;
@@ -38,14 +36,10 @@ public class BoardView : MonoBehaviour
                 tileSpot.onClick += OnTileSpotClick;
 
                 _tileSpots[y][x] = tileSpot;
-
-                int tileTypeIndex = board[y][x].type;
-                if (tileTypeIndex > -1)
+                if (board[y][x].Key != null)
                 {
-                    TileView tilePrefab = tilePrefabRepository.tileTypePrefabList[tileTypeIndex];
-                    TileView tile = Instantiate(tilePrefab);
-                    tileSpot.SetTile(tile);
-
+                    TileView tile = Instantiate(tileViewPrefab).Setup(board[y][x].Data.Type);
+                    tileSpot.SetTileView(tile);
                     _tiles[y][x] = tile;
                 }
             }
@@ -129,10 +123,8 @@ public class BoardView : MonoBehaviour
             Vector2Int position = addedTileInfo.position;
 
             TileSpotView tileSpot = _tileSpots[position.y][position.x];
-
-            TileView tilePrefab = tilePrefabRepository.tileTypePrefabList[addedTileInfo.type];
-            TileView tile = Instantiate(tilePrefab);
-            tileSpot.SetTile(tile);
+            TileView tile = Instantiate(tileViewPrefab).Setup(addedTileInfo.data.Type);
+            tileSpot.SetTileView(tile);
 
             _tiles[position.y][position.x] = tile;
 

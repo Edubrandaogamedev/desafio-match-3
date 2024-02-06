@@ -4,13 +4,13 @@ using UnityEngine;
 public class GameController
 {
     private List<List<Tile>> _boardTiles;
-    private List<int> _tilesTypes;
+    private TileData[] _tilesData;
     private int _tileCount;
 
-    public List<List<Tile>> StartGame(int boardWidth, int boardHeight)
+    public List<List<Tile>> StartGame(int boardWidth, int boardHeight, TileData[] tilesData)
     {
-        _tilesTypes = new List<int> { 0, 1, 2, 3 };
-        _boardTiles = CreateBoard(boardWidth, boardHeight, _tilesTypes);
+        _tilesData = tilesData;
+        _boardTiles = CreateBoard(boardWidth, boardHeight);
         return _boardTiles;
     }
 
@@ -18,23 +18,21 @@ public class GameController
     {
         List<List<Tile>> newBoard = CopyBoard(_boardTiles);
 
-        Tile switchedTile = newBoard[fromY][fromX];
-        newBoard[fromY][fromX] = newBoard[toY][toX];
-        newBoard[toY][toX] = switchedTile;
+        (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
 
         for (int y = 0; y < newBoard.Count; y++)
         {
             for (int x = 0; x < newBoard[y].Count; x++)
             {
                 if (x > 1
-                    && newBoard[y][x].type == newBoard[y][x - 1].type
-                    && newBoard[y][x - 1].type == newBoard[y][x - 2].type)
+                    && newBoard[y][x].Key == newBoard[y][x - 1].Key
+                    && newBoard[y][x - 1].Key == newBoard[y][x - 2].Key)
                 {
                     return true;
                 }
                 if (y > 1
-                    && newBoard[y][x].type == newBoard[y - 1][x].type
-                    && newBoard[y - 1][x].type == newBoard[y - 2][x].type)
+                    && newBoard[y][x].Key == newBoard[y - 1][x].Key
+                    && newBoard[y - 1][x].Key == newBoard[y - 2][x].Key)
                 {
                     return true;
                 }
@@ -47,9 +45,7 @@ public class GameController
     {
         List<List<Tile>> newBoard = CopyBoard(_boardTiles);
 
-        Tile switchedTile = newBoard[fromY][fromX];
-        newBoard[fromY][fromX] = newBoard[toY][toX];
-        newBoard[toY][toX] = switchedTile;
+        (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
 
         List<BoardSequence> boardSequences = new List<BoardSequence>();
         List<List<bool>> matchedTiles;
@@ -64,7 +60,7 @@ public class GameController
                     if (matchedTiles[y][x])
                     {
                         matchedPosition.Add(new Vector2Int(x, y));
-                        newBoard[y][x] = new Tile { id = -1, type = -1 };
+                        newBoard[y][x] = new Tile();
                     }
                 }
             }
@@ -82,11 +78,11 @@ public class GameController
                     {
                         Tile movedTile = newBoard[j - 1][x];
                         newBoard[j][x] = movedTile;
-                        if (movedTile.type > -1)
+                        if (movedTile.Key != null)
                         {
-                            if (movedTiles.ContainsKey(movedTile.id))
+                            if (movedTiles.ContainsKey(movedTile.Id))
                             {
-                                movedTiles[movedTile.id].to = new Vector2Int(x, j);
+                                movedTiles[movedTile.Id].to = new Vector2Int(x, j);
                             }
                             else
                             {
@@ -95,17 +91,13 @@ public class GameController
                                     from = new Vector2Int(x, j - 1),
                                     to = new Vector2Int(x, j)
                                 };
-                                movedTiles.Add(movedTile.id, movedTileInfo);
+                                movedTiles.Add(movedTile.Id, movedTileInfo);
                                 movedTilesList.Add(movedTileInfo);
                             }
                         }
                     }
 
-                    newBoard[0][x] = new Tile
-                    {
-                        id = -1,
-                        type = -1
-                    };
+                    newBoard[0][x] = new Tile();
                 }
             }
 
@@ -115,16 +107,16 @@ public class GameController
             {
                 for (int x = newBoard[y].Count - 1; x > -1; x--)
                 {
-                    if (newBoard[y][x].type == -1)
+                    if (newBoard[y][x].Key == null)
                     {
-                        int tileType = Random.Range(0, _tilesTypes.Count);
+                        int tileType = Random.Range(0, _tilesData.Length);
                         Tile tile = newBoard[y][x];
-                        tile.id = _tileCount++;
-                        tile.type = _tilesTypes[tileType];
+                        tile.Setup(_tilesData[tileType], _tileCount++);
                         addedTiles.Add(new AddedTileInfo
                         {
                             position = new Vector2Int(x, y),
-                            type = tile.type
+                            key = tile.Key,
+                            data = tile.Data
                         });
                     }
                 }
@@ -170,16 +162,16 @@ public class GameController
             for (int x = 0; x < newBoard[y].Count; x++)
             {
                 if (x > 1
-                    && newBoard[y][x].type == newBoard[y][x - 1].type
-                    && newBoard[y][x - 1].type == newBoard[y][x - 2].type)
+                    && newBoard[y][x].Key == newBoard[y][x - 1].Key
+                    && newBoard[y][x - 1].Key == newBoard[y][x - 2].Key)
                 {
                     matchedTiles[y][x] = true;
                     matchedTiles[y][x - 1] = true;
                     matchedTiles[y][x - 2] = true;
                 }
                 if (y > 1
-                    && newBoard[y][x].type == newBoard[y - 1][x].type
-                    && newBoard[y - 1][x].type == newBoard[y - 2][x].type)
+                    && newBoard[y][x].Key == newBoard[y - 1][x].Key
+                    && newBoard[y - 1][x].Key == newBoard[y - 2][x].Key)
                 {
                     matchedTiles[y][x] = true;
                     matchedTiles[y - 1][x] = true;
@@ -200,14 +192,14 @@ public class GameController
             for (int x = 0; x < boardToCopy[y].Count; x++)
             {
                 Tile tile = boardToCopy[y][x];
-                newBoard[y].Add(new Tile { id = tile.id, type = tile.type });
+                newBoard[y].Add(new Tile().Setup(tile.Data,tile.Id));
             }
         }
 
         return newBoard;
     }
 
-    private List<List<Tile>> CreateBoard(int width, int height, List<int> tileTypes)
+    private List<List<Tile>> CreateBoard(int width, int height)
     {
         List<List<Tile>> board = new List<List<Tile>>(height);
         _tileCount = 0;
@@ -216,7 +208,7 @@ public class GameController
             board.Add(new List<Tile>(width));
             for (int x = 0; x < width; x++)
             {
-                board[y].Add(new Tile { id = -1, type = -1 });
+                board[y].Add(new Tile());
             }
         }
 
@@ -224,25 +216,19 @@ public class GameController
         {
             for (int x = 0; x < width; x++)
             {
-                List<int> noMatchTypes = new List<int>(tileTypes.Count);
-                for (int i = 0; i < tileTypes.Count; i++)
-                {
-                    noMatchTypes.Add(_tilesTypes[i]);
-                }
-
+                List<TileData> noMatchTypes = new List<TileData>(_tilesData);
                 if (x > 1
-                    && board[y][x - 1].type == board[y][x - 2].type)
+                    && board[y][x - 1].Key == board[y][x - 2].Key)
                 {
-                    noMatchTypes.Remove(board[y][x - 1].type);
+                    noMatchTypes.Remove(board[y][x - 1].Data);
                 }
                 if (y > 1
-                    && board[y - 1][x].type == board[y - 2][x].type)
+                    && board[y - 1][x].Key == board[y - 2][x].Key)
                 {
-                    noMatchTypes.Remove(board[y - 1][x].type);
+                    noMatchTypes.Remove(board[y - 1][x].Data);
                 }
 
-                board[y][x].id = _tileCount++;
-                board[y][x].type = noMatchTypes[Random.Range(0, noMatchTypes.Count)];
+                board[y][x].Setup(noMatchTypes[Random.Range(0, noMatchTypes.Count)], _tileCount++);
             }
         }
 

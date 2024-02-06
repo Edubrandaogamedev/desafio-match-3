@@ -3,5 +3,6 @@
 public struct AddedTileInfo
 {
     public Vector2Int position;
-    public int type;
+    public string key;
+    public TileData data;
 }

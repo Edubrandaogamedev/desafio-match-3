@@ -174,6 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileSpotPrefab: {fileID: -4864831497923239132, guid: 6527630aaec5689489d14bfbb482fd0f, type: 3}
+  tileViewPrefab: {fileID: 8595690258952077401, guid: b60be567949646c4ca318fb576bb76d6, type: 3}
   tilePrefabRepository: {fileID: 11400000, guid: 153eac3747f207a40add49ed6e2dacb9, type: 2}
   boardContainer: {fileID: 429446045}
 --- !u!114 &429446044
@@ -434,6 +435,7 @@ MonoBehaviour:
   boardWidth: 10
   boardHeight: 10
   boardView: {fileID: 429446043}
+  tileDataCollection: {fileID: 11400000, guid: 5aacb9711ab4248479f5e7694e807010, type: 2}
 --- !u!114 &1122489954
 MonoBehaviour:
   m_ObjectHideFlags: 0
