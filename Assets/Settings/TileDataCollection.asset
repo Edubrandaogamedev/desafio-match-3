@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3231b2b0d4644cbece073a7766f55, type: 3}
+  m_Name: TileDataCollection
+  m_EditorClassIdentifier: 
+  tilesDatas:
+  - key: tile_default_blue
+    type: {r: 0, g: 0.007843138, b: 0.6039216, a: 1}
+  - key: tile_default_green
+    type: {r: 0.16470589, g: 0.7058824, b: 0, a: 1}
+  - key: tile_default_orange
+    type: {r: 0.90588236, g: 0.38039216, b: 0, a: 1}
+  - key: tile_default_pink
+    type: {r: 0.7647059, g: 0, b: 0.6156863, a: 1}
+  - key: tile_default_purple
+    type: {r: 0.41568628, g: 0, b: 0.6313726, a: 1}
+  - key: tile_default_red
+    type: {r: 0.69803923, g: 0, b: 0, a: 1}
+  - key: tile_default_yellow
+    type: {r: 1, g: 0.79607844, b: 0, a: 1}
