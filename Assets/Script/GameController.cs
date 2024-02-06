@@ -16,7 +16,7 @@ public class GameController
 
     public bool IsValidMovement(int fromX, int fromY, int toX, int toY)
     {
-        List<List<Tile>> newBoard = CopyBoard(_boardTiles);
+        List<List<Tile>> newBoard = Board.CopyBoardTiles(self:false,_boardTiles);
 
         (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
 
@@ -43,7 +43,7 @@ public class GameController
 
     public List<BoardSequence> SwapTile(int fromX, int fromY, int toX, int toY)
     {
-        List<List<Tile>> newBoard = CopyBoard(_boardTiles);
+        List<List<Tile>> newBoard = Board.CopyBoardTiles(self:false,_boardTiles);
 
         (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
 
@@ -182,23 +182,7 @@ public class GameController
 
         return matchedTiles;
     }
-
-    private static List<List<Tile>> CopyBoard(List<List<Tile>> boardToCopy)
-    {
-        List<List<Tile>> newBoard = new List<List<Tile>>(boardToCopy.Count);
-        for (int y = 0; y < boardToCopy.Count; y++)
-        {
-            newBoard.Add(new List<Tile>(boardToCopy[y].Count));
-            for (int x = 0; x < boardToCopy[y].Count; x++)
-            {
-                Tile tile = boardToCopy[y][x];
-                newBoard[y].Add(new Tile().Setup(tile.Data,tile.Id));
-            }
-        }
-
-        return newBoard;
-    }
-
+    
     private List<List<Tile>> CreateBoard(int width, int height)
     {
         List<List<Tile>> board = new List<List<Tile>>(height);

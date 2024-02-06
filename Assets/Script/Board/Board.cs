@@ -1,44 +1,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Board
+public static class Board
 {
-    private TileData[] _tilesData;
-    private int _tileCount;
+    private static TileData[] _tilesData;
+    private static int _tileCount;
 
-    public List<List<Tile>> BoardTiles { get; private set; }
+    public static List<List<Tile>> BoardTiles { get; private set; }
 
-    public Board(int width, int height, TileData[] tilesData)
+    public static List<List<Tile>> Initialize(int width, int height, TileData[] tilesData)
     {
         _tilesData = tilesData;
         BoardTiles = InitializeBoard(width, height);
         SetupBoard(BoardTiles);
+        return BoardTiles;
     }
-    public List<List<Tile>> CopyBoardTiles(bool self = true, List<List<Tile>> boardTilesToCopy = null)
+    
+    public static List<List<Tile>> CopyBoardTiles(bool self = true, List<List<Tile>> boardTilesToCopy = null)
     {
         return self ? 
             BoardTiles.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id))) :
             boardTilesToCopy.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id)));
     }
     
-    public void SetNewBoardTile(List<List<Tile>> newBoardTiles)
+    public static void SetNewBoardTile(List<List<Tile>> newBoardTiles)
     {
         BoardTiles = newBoardTiles;
     }
 
-    public bool CheckMatches(List<List<Tile>> boardToCheck, int x, int y)
+    public static bool CheckMatches(List<List<Tile>> boardToCheck, int x, int y)
     {
         var hasHorizontalMatch = x > 1 && boardToCheck[y][x].Key == boardToCheck[y][x - 1].Key && boardToCheck[y][x - 1].Key == boardToCheck[y][x - 2].Key;
         var hasVerticalMatch = y > 1 && boardToCheck[y][x].Key == boardToCheck[y - 1][x].Key && boardToCheck[y - 1][x].Key == boardToCheck[y - 2][x].Key;
         return hasHorizontalMatch || hasVerticalMatch;
     }
     
-    public HashSet<Vector2Int> GetMatchesPosition(bool self,List<List<Tile>> boardToCheck = null)
+    public static HashSet<Vector2Int> GetMatchesPosition(bool self,List<List<Tile>> boardToCheck = null)
     {
         return self ? GetMatchesPosition(BoardTiles) : GetMatchesPosition(boardToCheck);
     }
 
-    private HashSet<Vector2Int> GetMatchesPosition(List<List<Tile>> boardToCheck = null)
+    private static HashSet<Vector2Int> GetMatchesPosition(List<List<Tile>> boardToCheck = null)
     {
         HashSet<Vector2Int> matchesPositions = new HashSet<Vector2Int>();
         for (int y = 0; y < boardToCheck.Count; y++)
@@ -62,21 +64,22 @@ public class Board
         return matchesPositions;
     }
     
-    private List<List<Tile>> InitializeBoard(int width, int height)
+    private static List<List<Tile>> InitializeBoard(int width, int height)
     {
-        List<List<Tile>> board = new List<List<Tile>>(height);
+        var board = new List<List<Tile>>(height);
         for (int y = 0; y < height; y++)
         {
-            board.Add(new List<Tile>(width));
+            var row = new List<Tile>(width);
             for (int x = 0; x < width; x++)
             {
-                board[y].Add(new Tile());
+                row.Add(new Tile());
             }
+            board.Add(row);
         }
         return board;
     }
     
-    private void SetupBoard(List<List<Tile>> board)
+    private static void SetupBoard(List<List<Tile>> board)
     {
         _tileCount = 0;
         for (int y = 0; y < board.Count; y++)
@@ -89,7 +92,7 @@ public class Board
         }
     }
     
-    private List<TileData> GetAvailableTypes(List<List<Tile>> board, int x, int y)
+    private static List<TileData> GetAvailableTypes(List<List<Tile>> board, int x, int y)
     {
         List<TileData> noMatchTypes = new List<TileData>(_tilesData);
         
