@@ -47,17 +47,18 @@ public static class Board
         {
             for (int x = 0; x < boardToCheck[y].Count; x++)
             {
+                //Keep the position in this order, to avoid bugging the DoTween Sequence
                 if (x > 1 && boardToCheck[y][x].Key == boardToCheck[y][x - 1].Key && boardToCheck[y][x - 1].Key == boardToCheck[y][x - 2].Key)
                 {
-                    matchesPositions.Add(new Vector2Int(x,y));
-                    matchesPositions.Add(new Vector2Int(x-1,y));
                     matchesPositions.Add(new Vector2Int(x-2,y));
+                    matchesPositions.Add(new Vector2Int(x-1,y));
+                    matchesPositions.Add(new Vector2Int(x,y));
                 }
                 if (y > 1 && boardToCheck[y][x].Key == boardToCheck[y - 1][x].Key && boardToCheck[y - 1][x].Key == boardToCheck[y - 2][x].Key)
                 {
-                    matchesPositions.Add(new Vector2Int(x,y));
-                    matchesPositions.Add(new Vector2Int(x,y-1));
                     matchesPositions.Add(new Vector2Int(x,y-2));
+                    matchesPositions.Add(new Vector2Int(x,y-1));
+                    matchesPositions.Add(new Vector2Int(x,y));
                 }
             }
         }

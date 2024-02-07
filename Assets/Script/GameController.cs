@@ -1,11 +1,16 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameController
 {
     private List<List<Tile>> _boardTiles;
     private TileData[] _tilesData;
     private int _tileCount;
+    private int _currentScore;
+
+    public Action<int> OnScoreUpdated;
 
     public List<List<Tile>> StartGame(int boardWidth, int boardHeight, TileData[] tilesData)
     {
@@ -40,23 +45,17 @@ public class GameController
         (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
 
         List<BoardSequence> boardSequences = new List<BoardSequence>();
-        List<List<bool>> matchedTiles;
-        while (HasMatch(matchedTiles = FindMatches(newBoard)))
+        HashSet<Vector2Int> matchedTilesPosition = Board.GetMatchesPosition(self: false, newBoard);
+        while (matchedTilesPosition.Count>0)
         {
             //Cleaning the matched tiles
             List<Vector2Int> matchedPosition = new List<Vector2Int>();
-            for (int y = 0; y < newBoard.Count; y++)
+            foreach (var tilePosition in matchedTilesPosition)
             {
-                for (int x = 0; x < newBoard[y].Count; x++)
-                {
-                    if (matchedTiles[y][x])
-                    {
-                        matchedPosition.Add(new Vector2Int(x, y));
-                        newBoard[y][x] = new Tile();
-                    }
-                }
+                matchedPosition.Add(tilePosition);
+                newBoard[tilePosition.y][tilePosition.x] = new Tile();
+                IncreaseScore(1);
             }
-
             // Dropping the tiles
             Dictionary<int, MovedTileInfo> movedTiles = new Dictionary<int, MovedTileInfo>();
             List<MovedTileInfo> movedTilesList = new List<MovedTileInfo>();
@@ -88,7 +87,6 @@ public class GameController
                             }
                         }
                     }
-
                     newBoard[0][x] = new Tile();
                 }
             }
@@ -121,6 +119,7 @@ public class GameController
                 addedTiles = addedTiles
             };
             boardSequences.Add(sequence);
+            matchedTilesPosition = Board.GetMatchesPosition(self: false, newBoard);
         }
 
         _boardTiles = newBoard;
@@ -209,5 +208,11 @@ public class GameController
         }
 
         return board;
+    }
+
+    private void IncreaseScore(int value)
+    {
+        _currentScore += value;
+        OnScoreUpdated?.Invoke(_currentScore);
     }
 }
