@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -49,20 +50,18 @@ public class GameController
         while (matchedTilesPosition.Count>0)
         {
             //Cleaning the matched tiles
-            List<Vector2Int> matchedPosition = new List<Vector2Int>();
             foreach (var tilePosition in matchedTilesPosition)
             {
-                matchedPosition.Add(tilePosition);
                 newBoard[tilePosition.y][tilePosition.x] = new Tile();
                 IncreaseScore(1);
             }
             // Dropping the tiles
             Dictionary<int, MovedTileInfo> movedTiles = new Dictionary<int, MovedTileInfo>();
             List<MovedTileInfo> movedTilesList = new List<MovedTileInfo>();
-            for (int i = 0; i < matchedPosition.Count; i++)
+            foreach (var tilePosition in matchedTilesPosition)
             {
-                int x = matchedPosition[i].x;
-                int y = matchedPosition[i].y;
+                int x = tilePosition.x;
+                int y = tilePosition.y;
                 if (y > 0)
                 {
                     for (int j = y; j > 0; j--)
@@ -90,7 +89,6 @@ public class GameController
                     newBoard[0][x] = new Tile();
                 }
             }
-
             // Filling the board
             List<AddedTileInfo> addedTiles = new List<AddedTileInfo>();
             for (int y = newBoard.Count - 1; y > -1; y--)
@@ -114,7 +112,7 @@ public class GameController
 
             BoardSequence sequence = new BoardSequence
             {
-                matchedPosition = matchedPosition,
+                matchedPosition = matchedTilesPosition.ToList(),
                 movedTiles = movedTilesList,
                 addedTiles = addedTiles
             };

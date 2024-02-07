@@ -16,10 +16,17 @@ public class GameHandler : MonoBehaviour
     
     private GameController gameController;
 
+    public Action<int> OnScoreUpdated;
     private void Awake()
     {
         gameController = new GameController();
+        gameController.OnScoreUpdated += OnScoreUpdated;
         boardView.onTileClick += OnTileClick;
+    }
+
+    private void OnDestroy()
+    {
+        gameController.OnScoreUpdated -= OnScoreUpdated;
     }
 
     private void Start()
