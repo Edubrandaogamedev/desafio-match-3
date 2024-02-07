@@ -123,13 +123,13 @@ public class BoardView : MonoBehaviour
             Vector2Int position = addedTileInfo.position;
 
             TileSpotView tileSpot = _tileSpots[position.y][position.x];
-            TileView tile = Instantiate(tileViewPrefab).Setup(addedTileInfo.data.Type);
-            tileSpot.SetTileView(tile);
+            TileView tileView = Instantiate(tileViewPrefab).Setup(addedTileInfo.data.Type);
+            tileSpot.SetTileView(tileView);
 
-            _tiles[position.y][position.x] = tile;
+            _tiles[position.y][position.x] = tileView;
 
-            tile.transform.localScale = Vector2.zero;
-            seq.Join(tile.transform.DOScale(1.0f, 0.2f));
+            tileView.transform.localScale = Vector2.zero;
+            seq.Join(tileView.transform.DOScale(1.0f, 0.2f));
         }
 
         return seq;

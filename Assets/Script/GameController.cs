@@ -103,7 +103,6 @@ public class GameController
                         addedTiles.Add(new AddedTileInfo
                         {
                             position = new Vector2Int(x, y),
-                            key = tile.Key,
                             data = tile.Data
                         });
                     }
@@ -125,52 +124,6 @@ public class GameController
         //return _boardTiles;
     }
 
-    private static bool HasMatch(List<List<bool>> list)
-    {
-        for (int y = 0; y < list.Count; y++)
-            for (int x = 0; x < list[y].Count; x++)
-                if (list[y][x])
-                    return true;
-        return false;
-    }
-
-    private static List<List<bool>> FindMatches(List<List<Tile>> newBoard)
-    {
-        List<List<bool>> matchedTiles = new List<List<bool>>();
-        for (int y = 0; y < newBoard.Count; y++)
-        {
-            matchedTiles.Add(new List<bool>(newBoard[y].Count));
-            for (int x = 0; x < newBoard.Count; x++)
-            {
-                matchedTiles[y].Add(false);
-            }
-        }
-
-        for (int y = 0; y < newBoard.Count; y++)
-        {
-            for (int x = 0; x < newBoard[y].Count; x++)
-            {
-                if (x > 1
-                    && newBoard[y][x].Key == newBoard[y][x - 1].Key
-                    && newBoard[y][x - 1].Key == newBoard[y][x - 2].Key)
-                {
-                    matchedTiles[y][x] = true;
-                    matchedTiles[y][x - 1] = true;
-                    matchedTiles[y][x - 2] = true;
-                }
-                if (y > 1
-                    && newBoard[y][x].Key == newBoard[y - 1][x].Key
-                    && newBoard[y - 1][x].Key == newBoard[y - 2][x].Key)
-                {
-                    matchedTiles[y][x] = true;
-                    matchedTiles[y - 1][x] = true;
-                    matchedTiles[y - 2][x] = true;
-                }
-            }
-        }
-
-        return matchedTiles;
-    }
     
     private List<List<Tile>> CreateBoard(int width, int height)
     {
