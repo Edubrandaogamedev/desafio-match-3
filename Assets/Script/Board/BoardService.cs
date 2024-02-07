@@ -27,7 +27,7 @@ public static class BoardService
         return _tileCount++;
     }
     
-    public static void SetNewBoardTile(List<List<Tile>> newBoardTiles)
+    public static void UpdateBoard(List<List<Tile>> newBoardTiles)
     {
         BoardTiles = newBoardTiles;
     }

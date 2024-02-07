@@ -41,8 +41,7 @@ public class GameController
             };
             boardSequences.Add(sequence);
         }
-
-        BoardService.SetNewBoardTile(swappedBoard);
+        BoardService.UpdateBoard(swappedBoard);
         return boardSequences;
     }
     

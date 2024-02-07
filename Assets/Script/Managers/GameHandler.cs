@@ -87,7 +87,6 @@ public class GameHandler : MonoBehaviour
         sequence.Append(boardView.DestroyTiles(boardSequence.matchedPosition));
         sequence.Append(boardView.MoveTiles(boardSequence.movedTiles));
         sequence.Append(boardView.CreateTile(boardSequence.addedTiles));
-
         i++;
         if (i < boardSequences.Count)
         {
