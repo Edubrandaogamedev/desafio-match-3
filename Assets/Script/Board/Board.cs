@@ -12,9 +12,9 @@ public static class Board
     {
         _tilesData = tilesData;
         BoardTiles = InitializeBoard(width, height);
-        SetupBoard(BoardTiles);
         return BoardTiles;
     }
+    
     
     public static List<List<Tile>> CopyBoardTiles(bool self = true, List<List<Tile>> boardTilesToCopy = null)
     {
@@ -22,17 +22,32 @@ public static class Board
             BoardTiles.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id))) :
             boardTilesToCopy.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id)));
     }
+
+    public static int IncreaseTileCount()
+    {
+        return _tileCount++;
+    }
     
     public static void SetNewBoardTile(List<List<Tile>> newBoardTiles)
     {
         BoardTiles = newBoardTiles;
     }
 
-    public static bool CheckMatches(List<List<Tile>> boardToCheck, int x, int y)
+    public static bool HasMatches(List<List<Tile>> boardToCheck)
     {
-        var hasHorizontalMatch = x > 1 && boardToCheck[y][x].Key == boardToCheck[y][x - 1].Key && boardToCheck[y][x - 1].Key == boardToCheck[y][x - 2].Key;
-        var hasVerticalMatch = y > 1 && boardToCheck[y][x].Key == boardToCheck[y - 1][x].Key && boardToCheck[y - 1][x].Key == boardToCheck[y - 2][x].Key;
-        return hasHorizontalMatch || hasVerticalMatch;
+        for (int y = 0; y < boardToCheck.Count; y++)
+        {
+            for (int x = 0; x < boardToCheck[y].Count; x++)
+            {
+                var hasHorizontalMatch = x > 1 && boardToCheck[y][x].Key == boardToCheck[y][x - 1].Key && boardToCheck[y][x - 1].Key == boardToCheck[y][x - 2].Key;
+                var hasVerticalMatch = y > 1 && boardToCheck[y][x].Key == boardToCheck[y - 1][x].Key && boardToCheck[y - 1][x].Key == boardToCheck[y - 2][x].Key;
+                if (hasHorizontalMatch || hasVerticalMatch)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     public static HashSet<Vector2Int> GetMatchesPosition(bool self,List<List<Tile>> boardToCheck = null)
@@ -67,30 +82,20 @@ public static class Board
     
     private static List<List<Tile>> InitializeBoard(int width, int height)
     {
+        _tileCount = 0;
         var board = new List<List<Tile>>(height);
         for (int y = 0; y < height; y++)
         {
-            var row = new List<Tile>(width);
+            board.Add(new List<Tile>(width));
             for (int x = 0; x < width; x++)
             {
-                row.Add(new Tile());
+                List<TileData> noMatchTypes = GetAvailableTypes(board,x,y);
+                TileData randomType = noMatchTypes[Random.Range(0, noMatchTypes.Count)];
+                board[y].Add(new Tile().Setup(randomType,_tileCount++));
             }
-            board.Add(row);
+            
         }
         return board;
-    }
-    
-    private static void SetupBoard(List<List<Tile>> board)
-    {
-        _tileCount = 0;
-        for (int y = 0; y < board.Count; y++)
-        {
-            for (int x = 0; x < board[y].Count; x++)
-            {
-                List<TileData> noMatchTypes = GetAvailableTypes(board,x,y);
-                board[y][x].Setup(noMatchTypes[Random.Range(0, noMatchTypes.Count)],_tileCount++);
-            }
-        }
     }
     
     private static List<TileData> GetAvailableTypes(List<List<Tile>> board, int x, int y)
