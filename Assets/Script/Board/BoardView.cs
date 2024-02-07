@@ -38,7 +38,7 @@ public class BoardView : MonoBehaviour
                 _tileSpots[y][x] = tileSpot;
                 if (board[y][x].Key != null)
                 {
-                    TileView tile = Instantiate(tileViewPrefab).Setup(board[y][x].Data.Type);
+                    TileView tile = Instantiate(tileViewPrefab).Setup(board[y][x].Data.Sprite);
                     tileSpot.SetTileView(tile);
                     _tiles[y][x] = tile;
                 }
@@ -123,7 +123,7 @@ public class BoardView : MonoBehaviour
             Vector2Int position = addedTileInfo.position;
 
             TileSpotView tileSpot = _tileSpots[position.y][position.x];
-            TileView tileView = Instantiate(tileViewPrefab).Setup(addedTileInfo.data.Type);
+            TileView tileView = Instantiate(tileViewPrefab).Setup(addedTileInfo.data.Sprite);
             tileSpot.SetTileView(tileView);
 
             _tiles[position.y][position.x] = tileView;

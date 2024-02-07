@@ -3,14 +3,14 @@ using UnityEngine;
 
 public static class BoardService
 {
-    private static TileData[] _tilesData;
+    private static TileManager _tileManager;
     private static int _tileCount;
 
     public static List<List<Tile>> BoardTiles { get; private set; }
 
-    public static List<List<Tile>> Initialize(int width, int height, TileData[] tilesData)
+    public static List<List<Tile>> Initialize(int width, int height, TileManager tileManager)
     {
-        _tilesData = tilesData;
+        _tileManager = tileManager;
         BoardTiles = InitializeBoard(width, height);
         return BoardTiles;
     }
@@ -20,11 +20,6 @@ public static class BoardService
         List<List<Tile>> newBoard = CopyBoardTiles();
         (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
         return newBoard;
-    }
-    
-    public static int IncreaseTileCount()
-    {
-        return _tileCount++;
     }
     
     public static void UpdateBoard(List<List<Tile>> newBoardTiles)
@@ -100,9 +95,9 @@ public static class BoardService
             {
                 if (board[y][x].Key == null)
                 {
-                    int tileType = Random.Range(0, _tilesData.Length);
+                    TileData tileData = _tileManager.GetRandomTileDataByEffect(TileEffect.Default);
                     Tile tile = new Tile();
-                    tile.Setup(_tilesData[tileType], IncreaseTileCount());
+                    tile.Setup(tileData, _tileCount++);
                     board[y][x] = tile;
 
                     addedTiles.Add(new AddedTileInfo
@@ -140,7 +135,7 @@ public static class BoardService
         }
         return matchesPositions;
     }
-
+    
     private static MovedTileInfo MoveTile(List<List<Tile>> board, int x, int y, Dictionary<int, MovedTileInfo> movedTiles)
     {
         MovedTileInfo movedTileInfo = null;
@@ -185,7 +180,7 @@ public static class BoardService
     
     private static List<TileData> GetAvailableTypes(List<List<Tile>> board, int x, int y)
     {
-        List<TileData> noMatchTypes = new List<TileData>(_tilesData);
+        List<TileData> noMatchTypes = new List<TileData>(_tileManager.GetTileDataCollectionByEffect(TileEffect.Default));
         
         if (x > 1 && board[y][x - 1].Key == board[y][x - 2].Key)
         {
@@ -199,6 +194,7 @@ public static class BoardService
         return noMatchTypes;
     }
     
+    //TODO move it to an extension class
     private static List<List<Tile>> CopyBoardTiles(bool self = true, List<List<Tile>> boardTilesToCopy = null)
     {
         return self ? 

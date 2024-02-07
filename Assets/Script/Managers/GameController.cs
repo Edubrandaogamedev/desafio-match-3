@@ -2,19 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class GameController
 {
-    private List<List<Tile>> _boardTiles;
-    private int _tileCount;
     private int _currentScore;
-
     public Action<int> OnScoreUpdated;
 
-    public List<List<Tile>> StartGame(int boardWidth, int boardHeight, TileData[] tilesData)
+    public List<List<Tile>> StartGame(int boardWidth, int boardHeight, TileManager tileManager)
     {
-        return BoardService.Initialize(boardWidth, boardHeight, tilesData);;
+        return BoardService.Initialize(boardWidth, boardHeight,tileManager);
     }
 
     public bool IsValidMovement(int fromX, int fromY, int toX, int toY)

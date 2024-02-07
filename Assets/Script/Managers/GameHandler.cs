@@ -7,12 +7,9 @@ using DG.Tweening;
 public class GameHandler : MonoBehaviour
 {
     [SerializeField] private int boardWidth = 10;
-
     [SerializeField] private int boardHeight = 10;
-
-    [SerializeField] public BoardView boardView;
-    
-    [SerializeField] private TileDataCollection tileDataCollection;
+    [SerializeField] private BoardView boardView;
+    [SerializeField] private TileManager _tileManager;
     
     private GameController gameController;
 
@@ -31,7 +28,7 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-        List<List<Tile>> board = gameController.StartGame(boardWidth, boardHeight,tileDataCollection.TilesData);
+        List<List<Tile>> board = gameController.StartGame(boardWidth, boardHeight,_tileManager);
         boardView.CreateBoard(board);
     }
 
