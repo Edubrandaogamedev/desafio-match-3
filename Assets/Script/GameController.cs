@@ -16,46 +16,42 @@ public class GameController
     public List<List<Tile>> StartGame(int boardWidth, int boardHeight, TileData[] tilesData)
     {
         _tilesData = tilesData;
-        _boardTiles = BoardService.Initialize(boardWidth, boardHeight, tilesData);
-        return _boardTiles;
+        return BoardService.Initialize(boardWidth, boardHeight, tilesData);;
     }
 
     public bool IsValidMovement(int fromX, int fromY, int toX, int toY)
     {
-        List<List<Tile>> newBoard = BoardService.CopyBoardTiles(self:false,_boardTiles);
-        (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
-        return BoardService.HasMatches(newBoard);
+        List<List<Tile>> swappedBoard = BoardService.SwapTile(fromX, fromY, toX, toY);
+        return BoardService.HasMatches(swappedBoard);
     }
 
     public List<BoardSequence> SwapTile(int fromX, int fromY, int toX, int toY)
     {
-        List<List<Tile>> newBoard = BoardService.CopyBoardTiles(self:false,_boardTiles);
-
-        (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
+        List<List<Tile>> swappedBoard = BoardService.SwapTile(fromX, fromY, toX, toY);
 
         List<BoardSequence> boardSequences = new List<BoardSequence>();
-        HashSet<Vector2Int> matchedTilesPosition = BoardService.GetMatchesPosition(self: false, newBoard);
+        HashSet<Vector2Int> matchedTilesPosition = BoardService.GetMatchesPosition(self: false, swappedBoard);
         while (matchedTilesPosition.Count>0)
         {
             //Cleaning the matched tiles
             foreach (var tilePosition in matchedTilesPosition)
             {
-                newBoard[tilePosition.y][tilePosition.x] = new Tile();
+                swappedBoard[tilePosition.y][tilePosition.x] = new Tile();
                 IncreaseScore(1);
             }
             // Dropping the tiles
-            List<MovedTileInfo> movedTilesList = DropTiles(newBoard, matchedTilesPosition);
+            List<MovedTileInfo> movedTilesList = DropTiles(swappedBoard, matchedTilesPosition);
             
             // Filling the board
             List<AddedTileInfo> addedTiles = new List<AddedTileInfo>();
-            for (int y = newBoard.Count - 1; y > -1; y--)
+            for (int y = swappedBoard.Count - 1; y > -1; y--)
             {
-                for (int x = newBoard[y].Count - 1; x > -1; x--)
+                for (int x = swappedBoard[y].Count - 1; x > -1; x--)
                 {
-                    if (newBoard[y][x].Key == null)
+                    if (swappedBoard[y][x].Key == null)
                     {
                         int tileType = Random.Range(0, _tilesData.Length);
-                        Tile tile = newBoard[y][x];
+                        Tile tile = swappedBoard[y][x];
                         tile.Setup(_tilesData[tileType], BoardService.IncreaseTileCount());
                         addedTiles.Add(new AddedTileInfo
                         {
@@ -73,10 +69,10 @@ public class GameController
                 addedTiles = addedTiles
             };
             boardSequences.Add(sequence);
-            matchedTilesPosition = BoardService.GetMatchesPosition(self: false, newBoard);
+            matchedTilesPosition = BoardService.GetMatchesPosition(self: false, swappedBoard);
         }
 
-        _boardTiles = newBoard;
+        BoardService.SetNewBoardTile(swappedBoard);
         return boardSequences;
         //return _boardTiles;
     }

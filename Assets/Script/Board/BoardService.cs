@@ -15,24 +15,13 @@ public static class BoardService
         return BoardTiles;
     }
 
-    public static List<List<Tile>> SwapTile(bool copy, int fromX, int fromY, int toX, int toY)
+    public static List<List<Tile>> SwapTile(int fromX, int fromY, int toX, int toY)
     {
-        if (copy)
-        {
-            List<List<Tile>> newBoard = CopyBoardTiles();
-            (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
-            return newBoard;
-        }
-        (BoardTiles[fromY][fromX], BoardTiles[toY][toX]) = (BoardTiles[toY][toX], BoardTiles[fromY][fromX]);
-        return BoardTiles;
+        List<List<Tile>> newBoard = CopyBoardTiles();
+        (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
+        return newBoard;
     }
-    public static List<List<Tile>> CopyBoardTiles(bool self = true, List<List<Tile>> boardTilesToCopy = null)
-    {
-        return self ? 
-            BoardTiles.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id))) :
-            boardTilesToCopy.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id)));
-    }
-
+    
     public static int IncreaseTileCount()
     {
         return _tileCount++;
@@ -122,5 +111,12 @@ public static class BoardService
             noMatchTypes.Remove(board[y - 1][x].Data);
         }
         return noMatchTypes;
+    }
+    
+    private static List<List<Tile>> CopyBoardTiles(bool self = true, List<List<Tile>> boardTilesToCopy = null)
+    {
+        return self ? 
+            BoardTiles.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id))) :
+            boardTilesToCopy.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id)));
     }
 }
