@@ -89,6 +89,32 @@ public static class BoardService
         }
         return movedTilesList;
     }
+    
+    public static List<AddedTileInfo> FillEmptySpaces(List<List<Tile>> board)
+    {
+        List<AddedTileInfo> addedTiles = new List<AddedTileInfo>();
+
+        for (int y = board.Count - 1; y >= 0; y--)
+        {
+            for (int x = board[y].Count - 1; x >= 0; x--)
+            {
+                if (board[y][x].Key == null)
+                {
+                    int tileType = Random.Range(0, _tilesData.Length);
+                    Tile tile = new Tile();
+                    tile.Setup(_tilesData[tileType], IncreaseTileCount());
+                    board[y][x] = tile;
+
+                    addedTiles.Add(new AddedTileInfo
+                    {
+                        position = new Vector2Int(x, y),
+                        data = tile.Data
+                    });
+                }
+            }
+        }
+        return addedTiles;
+    }
 
     private static HashSet<Vector2Int> GetMatchesPosition(List<List<Tile>> boardToCheck = null)
     {
