@@ -32,6 +32,14 @@ public static class BoardService
         BoardTiles = newBoardTiles;
     }
 
+    public static void CleanTilesByPosition(List<List<Tile>> board,HashSet<Vector2Int> tilesPosition)
+    {
+        foreach (var tilePosition in tilesPosition)
+        {
+            board[tilePosition.y][tilePosition.x] = new Tile();
+        }
+    }
+    
     public static bool HasMatches(List<List<Tile>> boardToCheck)
     {
         for (int y = 0; y < boardToCheck.Count; y++)
@@ -52,6 +60,34 @@ public static class BoardService
     public static HashSet<Vector2Int> GetMatchesPosition(bool self,List<List<Tile>> boardToCheck = null)
     {
         return self ? GetMatchesPosition(BoardTiles) : GetMatchesPosition(boardToCheck);
+    }
+
+    public static List<MovedTileInfo> DropTiles(List<List<Tile>> board, HashSet<Vector2Int> matchedTilesPosition)
+    {
+        Dictionary<int, MovedTileInfo> movedTiles = new Dictionary<int, MovedTileInfo>();
+        List<MovedTileInfo> movedTilesList = new List<MovedTileInfo>();
+        
+        foreach (var tilePosition in matchedTilesPosition)
+        {
+            const int bottomRow = 0;
+            int x = tilePosition.x;
+            int y = tilePosition.y;
+            if (y <= bottomRow)
+            {
+                continue;
+            }
+            
+            for (int j = y; j > bottomRow; j--)
+            {
+                MovedTileInfo movedTileInfo = MoveTile(board, x, j, movedTiles);
+                if (movedTileInfo != null)
+                {
+                    movedTilesList.Add(MoveTile(board, x, j, movedTiles));
+                }
+            }
+            board[0][x] = new Tile();
+        }
+        return movedTilesList;
     }
 
     private static HashSet<Vector2Int> GetMatchesPosition(List<List<Tile>> boardToCheck = null)
@@ -77,6 +113,30 @@ public static class BoardService
             }
         }
         return matchesPositions;
+    }
+
+    private static MovedTileInfo MoveTile(List<List<Tile>> board, int x, int y, Dictionary<int, MovedTileInfo> movedTiles)
+    {
+        MovedTileInfo movedTileInfo = null;
+        Tile movedTile = board[y - 1][x];
+        board[y][x] = movedTile;
+        if (movedTile.Key != null)
+        {
+            if (movedTiles.TryGetValue(movedTile.Id, out movedTileInfo))
+            {
+                movedTileInfo.to = new Vector2Int(x, y);
+            }
+            else
+            {
+                movedTileInfo = new MovedTileInfo
+                {
+                    from = new Vector2Int(x, y - 1),
+                    to = new Vector2Int(x, y)
+                };
+                movedTiles.Add(movedTile.Id, movedTileInfo);
+            }
+        }
+        return movedTileInfo;
     }
     
     private static List<List<Tile>> InitializeBoard(int width, int height)

@@ -58,12 +58,11 @@ public class GameHandler : MonoBehaviour
                     bool isValid = gameController.IsValidMovement(selectedX, selectedY, x, y);
                     if (!isValid)
                     {
-                        boardView.SwapTiles(x, y, selectedX, selectedY)
-                        .onComplete += () => isAnimating = false;
+                        boardView.SwapTiles(x, y, selectedX, selectedY).onComplete += () => isAnimating = false;
                     }
                     else
                     {
-                        List<BoardSequence> swapResult = gameController.SwapTile(selectedX, selectedY, x, y);
+                        List<BoardSequence> swapResult = gameController.ProcessMatches(selectedX, selectedY, x, y);
 
                         AnimateBoard(swapResult, 0, () => isAnimating = false);
                     }

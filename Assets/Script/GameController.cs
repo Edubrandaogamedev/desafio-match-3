@@ -25,22 +25,15 @@ public class GameController
         return BoardService.HasMatches(swappedBoard);
     }
 
-    public List<BoardSequence> SwapTile(int fromX, int fromY, int toX, int toY)
+    public List<BoardSequence> ProcessMatches(int fromX, int fromY, int toX, int toY)
     {
         List<List<Tile>> swappedBoard = BoardService.SwapTile(fromX, fromY, toX, toY);
-
         List<BoardSequence> boardSequences = new List<BoardSequence>();
-        HashSet<Vector2Int> matchedTilesPosition = BoardService.GetMatchesPosition(self: false, swappedBoard);
-        while (matchedTilesPosition.Count>0)
+        while (ProcessingMatches(swappedBoard,out HashSet<Vector2Int> matchedTilesPosition))
         {
-            //Cleaning the matched tiles
-            foreach (var tilePosition in matchedTilesPosition)
-            {
-                swappedBoard[tilePosition.y][tilePosition.x] = new Tile();
-                IncreaseScore(1);
-            }
-            // Dropping the tiles
-            List<MovedTileInfo> movedTilesList = DropTiles(swappedBoard, matchedTilesPosition);
+            BoardService.CleanTilesByPosition(swappedBoard,matchedTilesPosition);
+            IncreaseScore(matchedTilesPosition.Count);
+            List<MovedTileInfo> movedTilesList = BoardService.DropTiles(swappedBoard,matchedTilesPosition);
             
             // Filling the board
             List<AddedTileInfo> addedTiles = new List<AddedTileInfo>();
@@ -69,7 +62,6 @@ public class GameController
                 addedTiles = addedTiles
             };
             boardSequences.Add(sequence);
-            matchedTilesPosition = BoardService.GetMatchesPosition(self: false, swappedBoard);
         }
 
         BoardService.SetNewBoardTile(swappedBoard);
@@ -77,48 +69,12 @@ public class GameController
         //return _boardTiles;
     }
     
-    private List<MovedTileInfo> DropTiles(List<List<Tile>> board, HashSet<Vector2Int> matchedTilesPosition)
+    private bool ProcessingMatches(List<List<Tile>> board, out HashSet<Vector2Int> matchedTilesPosition)
     {
-        Dictionary<int, MovedTileInfo> movedTiles = new Dictionary<int, MovedTileInfo>();
-        List<MovedTileInfo> movedTilesList = new List<MovedTileInfo>();
-
-        foreach (var tilePosition in matchedTilesPosition)
-        {
-            int x = tilePosition.x;
-            int y = tilePosition.y;
-
-            if (y > 0)
-            {
-                for (int j = y; j > 0; j--)
-                {
-                    Tile movedTile = board[j - 1][x];
-                    board[j][x] = movedTile;
-
-                    if (movedTile.Key != null)
-                    {
-                        if (movedTiles.TryGetValue(movedTile.Id, out MovedTileInfo movedTileInfo))
-                        {
-                            movedTileInfo.to = new Vector2Int(x, j);
-                        }
-                        else
-                        {
-                            movedTileInfo = new MovedTileInfo
-                            {
-                                from = new Vector2Int(x, j - 1),
-                                to = new Vector2Int(x, j)
-                            };
-                            movedTiles.Add(movedTile.Id, movedTileInfo);
-                            movedTilesList.Add(movedTileInfo);
-                        }
-                    }
-                }
-                board[0][x] = new Tile();
-            }
-        }
-
-        return movedTilesList;
+        matchedTilesPosition = BoardService.GetMatchesPosition(self: false, board);
+        return matchedTilesPosition.Count > 0;
     }
-
+    
     // Method to fill empty spaces with new tiles
     private List<AddedTileInfo> FillEmptySpaces(List<List<Tile>> board)
     {
