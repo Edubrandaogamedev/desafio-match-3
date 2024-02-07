@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Board
+public static class BoardService
 {
     private static TileData[] _tilesData;
     private static int _tileCount;
@@ -14,8 +14,18 @@ public static class Board
         BoardTiles = InitializeBoard(width, height);
         return BoardTiles;
     }
-    
-    
+
+    public static List<List<Tile>> SwapTile(bool copy, int fromX, int fromY, int toX, int toY)
+    {
+        if (copy)
+        {
+            List<List<Tile>> newBoard = CopyBoardTiles();
+            (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
+            return newBoard;
+        }
+        (BoardTiles[fromY][fromX], BoardTiles[toY][toX]) = (BoardTiles[toY][toX], BoardTiles[fromY][fromX]);
+        return BoardTiles;
+    }
     public static List<List<Tile>> CopyBoardTiles(bool self = true, List<List<Tile>> boardTilesToCopy = null)
     {
         return self ? 

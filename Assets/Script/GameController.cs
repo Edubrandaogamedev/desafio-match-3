@@ -16,26 +16,25 @@ public class GameController
     public List<List<Tile>> StartGame(int boardWidth, int boardHeight, TileData[] tilesData)
     {
         _tilesData = tilesData;
-        _boardTiles = Board.Initialize(boardWidth, boardHeight, tilesData);
+        _boardTiles = BoardService.Initialize(boardWidth, boardHeight, tilesData);
         return _boardTiles;
     }
 
     public bool IsValidMovement(int fromX, int fromY, int toX, int toY)
     {
-        List<List<Tile>> newBoard = Board.CopyBoardTiles(self:false,_boardTiles);
-
+        List<List<Tile>> newBoard = BoardService.CopyBoardTiles(self:false,_boardTiles);
         (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
-        return Board.HasMatches(newBoard);
+        return BoardService.HasMatches(newBoard);
     }
 
     public List<BoardSequence> SwapTile(int fromX, int fromY, int toX, int toY)
     {
-        List<List<Tile>> newBoard = Board.CopyBoardTiles(self:false,_boardTiles);
+        List<List<Tile>> newBoard = BoardService.CopyBoardTiles(self:false,_boardTiles);
 
         (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
 
         List<BoardSequence> boardSequences = new List<BoardSequence>();
-        HashSet<Vector2Int> matchedTilesPosition = Board.GetMatchesPosition(self: false, newBoard);
+        HashSet<Vector2Int> matchedTilesPosition = BoardService.GetMatchesPosition(self: false, newBoard);
         while (matchedTilesPosition.Count>0)
         {
             //Cleaning the matched tiles
@@ -57,7 +56,7 @@ public class GameController
                     {
                         int tileType = Random.Range(0, _tilesData.Length);
                         Tile tile = newBoard[y][x];
-                        tile.Setup(_tilesData[tileType], Board.IncreaseTileCount());
+                        tile.Setup(_tilesData[tileType], BoardService.IncreaseTileCount());
                         addedTiles.Add(new AddedTileInfo
                         {
                             position = new Vector2Int(x, y),
@@ -74,7 +73,7 @@ public class GameController
                 addedTiles = addedTiles
             };
             boardSequences.Add(sequence);
-            matchedTilesPosition = Board.GetMatchesPosition(self: false, newBoard);
+            matchedTilesPosition = BoardService.GetMatchesPosition(self: false, newBoard);
         }
 
         _boardTiles = newBoard;
@@ -137,7 +136,7 @@ public class GameController
                 {
                     int tileType = Random.Range(0, _tilesData.Length);
                     Tile tile = new Tile();
-                    tile.Setup(_tilesData[tileType], Board.IncreaseTileCount());
+                    tile.Setup(_tilesData[tileType], BoardService.IncreaseTileCount());
                     board[y][x] = tile;
 
                     addedTiles.Add(new AddedTileInfo
