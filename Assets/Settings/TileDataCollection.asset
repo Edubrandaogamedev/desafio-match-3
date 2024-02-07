@@ -14,16 +14,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilesDatas:
   - key: tile_default_blue
-    type: {r: 0, g: 0.007843138, b: 0.6039216, a: 1}
+    effects: 0
+    sprite: {fileID: -1758471070261482174, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
   - key: tile_default_green
-    type: {r: 0.16470589, g: 0.7058824, b: 0, a: 1}
+    effects: 0
+    sprite: {fileID: -5986636298288401654, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
   - key: tile_default_orange
-    type: {r: 0.90588236, g: 0.38039216, b: 0, a: 1}
-  - key: tile_default_pink
-    type: {r: 0.7647059, g: 0, b: 0.6156863, a: 1}
-  - key: tile_default_purple
-    type: {r: 0.41568628, g: 0, b: 0.6313726, a: 1}
+    effects: 0
+    sprite: {fileID: -2169293882693269399, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_default_white
+    effects: 0
+    sprite: {fileID: 5550003565732610977, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
   - key: tile_default_red
-    type: {r: 0.69803923, g: 0, b: 0, a: 1}
+    effects: 0
+    sprite: {fileID: -1330530341110889857, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
   - key: tile_default_yellow
-    type: {r: 1, g: 0.79607844, b: 0, a: 1}
+    effects: 0
+    sprite: {fileID: 51599150788349912, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_blue
+    effects: 1
+    sprite: {fileID: -1175823077669148920, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_green
+    effects: 1
+    sprite: {fileID: 144864612795797204, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_orange
+    effects: 1
+    sprite: {fileID: -867493121413407710, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_white
+    effects: 1
+    sprite: {fileID: -6774105897965094072, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_red
+    effects: 1
+    sprite: {fileID: -4440744772958199466, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_yellow
+    effects: 1
+    sprite: {fileID: 80297291871039121, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_blue
+    effects: 2
+    sprite: {fileID: -6436398989470862229, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_green
+    effects: 2
+    sprite: {fileID: 3198649894457114247, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_orange
+    effects: 2
+    sprite: {fileID: -6932703352468998826, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_white
+    effects: 2
+    sprite: {fileID: -8865834633515006970, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_red
+    effects: 2
+    sprite: {fileID: -6280353478139503929, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_yellow
+    effects: 2
+    sprite: {fileID: -2542488484110685575, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
