@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public static class BoardService
 {
@@ -27,9 +29,9 @@ public static class BoardService
         BoardTiles = newBoardTiles;
     }
 
-    public static void CleanTilesByPosition(List<List<Tile>> board,HashSet<Vector2Int> tilesPosition)
+    public static void CleanTilesByPosition(List<List<Tile>> board,List<Vector2Int> matchTilePositions)
     {
-        foreach (var tilePosition in tilesPosition)
+        foreach (var tilePosition in matchTilePositions)
         {
             board[tilePosition.y][tilePosition.x] = new Tile();
         }
@@ -57,12 +59,11 @@ public static class BoardService
         return self ? GetMatchesPosition(BoardTiles) : GetMatchesPosition(boardToCheck);
     }
 
-    public static List<MovedTileInfo> DropTiles(List<List<Tile>> board, HashSet<Vector2Int> matchedTilesPosition)
+    public static List<MovedTileInfo> DropTiles(List<List<Tile>> board, List<Vector2Int> matchedTilesGroup)
     {
         Dictionary<int, MovedTileInfo> movedTiles = new Dictionary<int, MovedTileInfo>();
         List<MovedTileInfo> movedTilesList = new List<MovedTileInfo>();
-        
-        foreach (var tilePosition in matchedTilesPosition)
+        foreach (var tilePosition in matchedTilesGroup)
         {
             const int bottomRow = 0;
             int x = tilePosition.x;
@@ -97,7 +98,7 @@ public static class BoardService
                 {
                     TileData tileData = _tileManager.GetRandomTileDataByEffect(TileEffect.Default);
                     Tile tile = new Tile();
-                    tile.Setup(tileData, _tileCount++);
+                    tile.Setup(tileData,new Vector2Int(x,y), _tileCount++);
                     board[y][x] = tile;
 
                     addedTiles.Add(new AddedTileInfo
@@ -135,7 +136,70 @@ public static class BoardService
         }
         return matchesPositions;
     }
+    //TODO review this code
+    public static List<HashSet<Vector2Int>> GetMatchesGroups(List<List<Tile>> boardToCheck,int matchSize)
+    {
+        List<HashSet<Vector2Int>> matchesGroups = new List<HashSet<Vector2Int>>();
+        int width = boardToCheck[0].Count;
+        int height = boardToCheck.Count;
+        bool[,] visited = new bool[height, width];
+        
+        void ExpandSearchOnDirection(Vector2Int start, HashSet<Vector2Int> currentGroup, Vector2Int direction, int directionSize)
+        {
+            for (int i = 0; i < directionSize; i++)
+            {
+                int x = start.x + i * direction.x;
+                int y = start.y + i * direction.y;
+
+                if (!IsInsideBoard(new Vector2Int(x,y),width,height))
+                {
+                    break;
+                }
+
+                if (boardToCheck[y][x].Key != boardToCheck[start.y][start.x].Key)
+                {
+                    break;
+                }
+
+                currentGroup.Add(new Vector2Int(x, y));
+                visited[y, x] = true;
+            }
+        }
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (visited[y, x])
+                {
+                    continue;
+                }
+                
+                HashSet<Vector2Int> horizontalGroup = new HashSet<Vector2Int>();
+                ExpandSearchOnDirection(new Vector2Int(x, y), horizontalGroup, Vector2Int.right,width);
+                ExpandSearchOnDirection(new Vector2Int(x, y), horizontalGroup, Vector2Int.left,width);
+                if (horizontalGroup.Count >= matchSize)
+                {
+                    List<Vector2Int> sortedHorizontalGroup = horizontalGroup.OrderBy(tile => tile.x).ToList();
+                    matchesGroups.Add(new HashSet<Vector2Int>(sortedHorizontalGroup));
+                }
+                
+                HashSet<Vector2Int> verticalGroup = new HashSet<Vector2Int>();
+                ExpandSearchOnDirection(new Vector2Int(x, y), verticalGroup, Vector2Int.down,height);
+                ExpandSearchOnDirection(new Vector2Int(x, y), verticalGroup, Vector2Int.up,height);
+                if (verticalGroup.Count >= matchSize)
+                {
+                    List<Vector2Int> sortedVerticalGroup = verticalGroup.OrderBy(tile => tile.y).ToList();
+                    matchesGroups.Add(new HashSet<Vector2Int>(sortedVerticalGroup));
+                }
+            }
+        }
+        return matchesGroups;
+    }
     
+    private static bool IsInsideBoard(Vector2Int position, int boardWidth, int boardHeight)
+    {
+        return position.x >= 0 && position.x < boardWidth && position.y >= 0 && position.y < boardHeight;
+    }
     private static MovedTileInfo MoveTile(List<List<Tile>> board, int x, int y, Dictionary<int, MovedTileInfo> movedTiles)
     {
         MovedTileInfo movedTileInfo = null;
@@ -171,7 +235,7 @@ public static class BoardService
             {
                 List<TileData> noMatchTypes = GetAvailableTypes(board,x,y);
                 TileData randomType = noMatchTypes[Random.Range(0, noMatchTypes.Count)];
-                board[y].Add(new Tile().Setup(randomType,_tileCount++));
+                board[y].Add(new Tile().Setup(randomType,new Vector2Int(x,y),_tileCount++));
             }
             
         }
@@ -198,7 +262,7 @@ public static class BoardService
     private static List<List<Tile>> CopyBoardTiles(bool self = true, List<List<Tile>> boardTilesToCopy = null)
     {
         return self ? 
-            BoardTiles.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id))) :
-            boardTilesToCopy.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data, tile.Id)));
+            BoardTiles.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data,tile.Position, tile.Id))) :
+            boardTilesToCopy.ConvertAll(row => row.ConvertAll(tile => new Tile().Setup(tile.Data,tile.Position, tile.Id)));
     }
 }
