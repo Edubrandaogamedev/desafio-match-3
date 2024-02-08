@@ -6,6 +6,7 @@ public class BoardSequence
     public List<Vector2Int> matchedPosition;
     public List<AddedTileInfo> addedTiles;
     public List<MovedTileInfo> movedTiles;
+    public List<AddedTileInfo> specialTiles;
 
     public override string ToString()
     {

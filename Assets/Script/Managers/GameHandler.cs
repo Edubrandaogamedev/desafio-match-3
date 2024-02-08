@@ -81,6 +81,7 @@ public class GameHandler : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         BoardSequence boardSequence = boardSequences[i];
         sequence.Append(boardView.DestroyTiles(boardSequence.matchedPosition));
+        sequence.Append(boardView.CreateTile(boardSequence.specialTiles));
         sequence.Append(boardView.MoveTiles(boardSequence.movedTiles));
         sequence.Append(boardView.CreateTile(boardSequence.addedTiles));
         i++;
