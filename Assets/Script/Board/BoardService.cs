@@ -79,8 +79,8 @@ public static class BoardService
         {
             for (int x = 0; x < boardToCheck[y].Count; x++)
             {
-                var hasHorizontalMatch = x > 1 && boardToCheck[y][x].Key == boardToCheck[y][x - 1].Key && boardToCheck[y][x - 1].Key == boardToCheck[y][x - 2].Key;
-                var hasVerticalMatch = y > 1 && boardToCheck[y][x].Key == boardToCheck[y - 1][x].Key && boardToCheck[y - 1][x].Key == boardToCheck[y - 2][x].Key;
+                var hasHorizontalMatch = x > 1 && boardToCheck[y][x].Type == boardToCheck[y][x - 1].Type && boardToCheck[y][x - 1].Type == boardToCheck[y][x - 2].Type;
+                var hasVerticalMatch = y > 1 && boardToCheck[y][x].Type == boardToCheck[y - 1][x].Type && boardToCheck[y - 1][x].Type == boardToCheck[y - 2][x].Type;
                 if (hasHorizontalMatch || hasVerticalMatch)
                 {
                     return true;
@@ -161,13 +161,13 @@ public static class BoardService
             for (int x = 0; x < boardToCheck[y].Count; x++)
             {
                 //Keep the position in this order, to avoid bugging the DoTween Sequence
-                if (x > 1 && boardToCheck[y][x].Key == boardToCheck[y][x - 1].Key && boardToCheck[y][x - 1].Key == boardToCheck[y][x - 2].Key)
+                if (x > 1 && boardToCheck[y][x].Type == boardToCheck[y][x - 1].Type && boardToCheck[y][x - 1].Type == boardToCheck[y][x - 2].Type)
                 {
                     matchesPositions.Add(new Vector2Int(x-2,y));
                     matchesPositions.Add(new Vector2Int(x-1,y));
                     matchesPositions.Add(new Vector2Int(x,y));
                 }
-                if (y > 1 && boardToCheck[y][x].Key == boardToCheck[y - 1][x].Key && boardToCheck[y - 1][x].Key == boardToCheck[y - 2][x].Key)
+                if (y > 1 && boardToCheck[y][x].Type == boardToCheck[y - 1][x].Type && boardToCheck[y - 1][x].Type == boardToCheck[y - 2][x].Type)
                 {
                     matchesPositions.Add(new Vector2Int(x,y-2));
                     matchesPositions.Add(new Vector2Int(x,y-1));
@@ -197,7 +197,7 @@ public static class BoardService
                     break;
                 }
                 
-                if (boardToCheck[y][x].Key != boardToCheck[start.y][start.x].Key)
+                if (boardToCheck[y][x].Type != boardToCheck[start.y][start.x].Type)
                 {
                     break;
                 }
@@ -259,7 +259,7 @@ public static class BoardService
         MovedTileInfo movedTileInfo = null;
         Tile movedTile = board[y - 1][x];
         board[y][x] = movedTile;
-        if (movedTile.Key != null)
+        if (movedTile.Type != TileType.None)
         {
             if (movedTiles.TryGetValue(movedTile.Id, out movedTileInfo))
             {
@@ -300,12 +300,12 @@ public static class BoardService
     {
         List<TileData> noMatchTypes = new List<TileData>(_tileManager.GetTileDataCollectionByEffect(TileEffect.Default));
         
-        if (x > 1 && board[y][x - 1].Key == board[y][x - 2].Key)
+        if (x > 1 && board[y][x - 1].Type == board[y][x - 2].Type)
         {
             noMatchTypes.Remove(board[y][x - 1].Data);
         }
                 
-        if (y > 1 && board[y - 1][x].Key == board[y - 2][x].Key)
+        if (y > 1 && board[y - 1][x].Type == board[y - 2][x].Type)
         {
             noMatchTypes.Remove(board[y - 1][x].Data);
         }
