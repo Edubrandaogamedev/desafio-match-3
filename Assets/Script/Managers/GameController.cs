@@ -17,7 +17,7 @@ public class GameController
     public bool IsValidMovement(int fromX, int fromY, int toX, int toY)
     {
         List<List<Tile>> swappedBoard = BoardService.SwapTile(fromX, fromY, toX, toY);
-        return BoardService.HasMatches(swappedBoard);
+        return BoardService.HasMatches(swappedBoard,matchSize);
     }
 
     public List<BoardSequence> ProcessMatches(int fromX, int fromY, int toX, int toY)
