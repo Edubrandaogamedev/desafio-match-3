@@ -16,7 +16,7 @@ public class GameHandler : MonoBehaviour
     public Action<int> OnScoreUpdated;
     private void Awake()
     {
-        gameController = new GameController();
+        gameController = new GameController(_tileManager);
         gameController.OnScoreUpdated += OnScoreUpdated;
         boardView.onTileClick += OnTileClick;
     }
@@ -28,7 +28,7 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-        List<List<Tile>> board = gameController.StartGame(boardWidth, boardHeight,_tileManager);
+        List<List<Tile>> board = BoardService.Initialize(boardWidth, boardHeight,_tileManager);
         boardView.CreateBoard(board);
     }
 
@@ -79,9 +79,9 @@ public class GameHandler : MonoBehaviour
     private void AnimateBoard(List<BoardSequence> boardSequences, int i, Action onComplete)
     {
         Sequence sequence = DOTween.Sequence();
-
         BoardSequence boardSequence = boardSequences[i];
         sequence.Append(boardView.DestroyTiles(boardSequence.matchedPosition));
+        sequence.Append(boardView.CreateTile(boardSequence.specialTiles));
         sequence.Append(boardView.MoveTiles(boardSequence.movedTiles));
         sequence.Append(boardView.CreateTile(boardSequence.addedTiles));
         i++;

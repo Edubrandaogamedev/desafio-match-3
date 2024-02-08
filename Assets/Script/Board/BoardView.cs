@@ -36,7 +36,7 @@ public class BoardView : MonoBehaviour
                 tileSpot.onClick += OnTileSpotClick;
 
                 _tileSpots[y][x] = tileSpot;
-                if (board[y][x].Key != null)
+                if (board[y][x].Type != TileType.None)
                 {
                     TileView tile = Instantiate(tileViewPrefab).Setup(board[y][x].Data.Sprite);
                     tileSpot.SetTileView(tile);
