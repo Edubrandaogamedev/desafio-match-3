@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3231b2b0d4644cbece073a7766f55, type: 3}
+  m_Name: TileDataCollection
+  m_EditorClassIdentifier: 
+  tilesDatas:
+  - key: tile_default_blue
+    type: 1
+    effects: 0
+    sprite: {fileID: -1758471070261482174, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_default_green
+    type: 2
+    effects: 0
+    sprite: {fileID: -5986636298288401654, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_default_orange
+    type: 3
+    effects: 0
+    sprite: {fileID: -2169293882693269399, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_default_white
+    type: 4
+    effects: 0
+    sprite: {fileID: 5550003565732610977, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_default_red
+    type: 5
+    effects: 0
+    sprite: {fileID: -1330530341110889857, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_default_yellow
+    type: 6
+    effects: 0
+    sprite: {fileID: 51599150788349912, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_blue
+    type: 1
+    effects: 1
+    sprite: {fileID: -1175823077669148920, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_green
+    type: 2
+    effects: 1
+    sprite: {fileID: 144864612795797204, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_orange
+    type: 3
+    effects: 1
+    sprite: {fileID: -867493121413407710, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_white
+    type: 4
+    effects: 1
+    sprite: {fileID: -6774105897965094072, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_red
+    type: 5
+    effects: 1
+    sprite: {fileID: -4440744772958199466, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_row_yellow
+    type: 6
+    effects: 1
+    sprite: {fileID: 80297291871039121, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_blue
+    type: 1
+    effects: 2
+    sprite: {fileID: -6436398989470862229, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_green
+    type: 2
+    effects: 2
+    sprite: {fileID: 3198649894457114247, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_orange
+    type: 3
+    effects: 2
+    sprite: {fileID: -6932703352468998826, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_white
+    type: 4
+    effects: 2
+    sprite: {fileID: -8865834633515006970, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_red
+    type: 5
+    effects: 2
+    sprite: {fileID: -6280353478139503929, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_clear_column_yellow
+    type: 6
+    effects: 2
+    sprite: {fileID: -2542488484110685575, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_blue
+    type: 1
+    effects: 4
+    sprite: {fileID: -393380713842846705, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_green
+    type: 2
+    effects: 4
+    sprite: {fileID: -7516536292592786781, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_orange
+    type: 3
+    effects: 4
+    sprite: {fileID: 1537299229063919381, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_white
+    type: 4
+    effects: 4
+    sprite: {fileID: -1567817312370920673, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_red
+    type: 5
+    effects: 4
+    sprite: {fileID: 666894837039678134, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_yellow
+    type: 6
+    effects: 4
+    sprite: {fileID: 39724412523307875, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
