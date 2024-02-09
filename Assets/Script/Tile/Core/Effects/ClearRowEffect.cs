@@ -5,7 +5,6 @@ public class ClearRowEffect : ITileEffect
 {
     public HashSet<Vector2Int> ApplyEffect(List<List<Tile>> board, Vector2Int tilePosition)
     {
-        Debug.Log($"<color=cyan> TO DESTRUINDO TUDO EM LINHA AAAAAA </color>");
         return GetAllTilesInRow(board,tilePosition);
     }
 

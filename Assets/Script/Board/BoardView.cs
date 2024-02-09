@@ -125,7 +125,6 @@ public class BoardView : MonoBehaviour
             TileSpotView tileSpot = _tileSpots[position.y][position.x];
             TileView tileView = Instantiate(tileViewPrefab).Setup(addedTileInfo.data.Sprite);
             tileSpot.SetTileView(tileView);
-
             _tiles[position.y][position.x] = tileView;
 
             tileView.transform.localScale = Vector2.zero;

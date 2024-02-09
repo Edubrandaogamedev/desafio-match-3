@@ -23,24 +23,25 @@ public class GameController
         return hasMatchOnFromPosition || hasMatchOnToPosition;
     }
 
+    //TODO: Need flow review, for now I locked the dynamically special tile creation to avoid some position and sequence visual bugs, need review
     public List<BoardSequence> ProcessMatches(int fromX, int fromY, int toX, int toY)
     {
         List<List<Tile>> swappedBoard = BoardService.SwapTile(fromX, fromY, toX, toY);
         List<BoardSequence> boardSequences = new List<BoardSequence>();
-        while (ProcessingMatches(swappedBoard,out List<List<Vector2Int>> matchedTilesGroups))
+        List<Vector2Int> tilesToCheckPosition = new List<Vector2Int>() { new Vector2Int(fromX, fromY), new Vector2Int(toX, toY) };
+        List<TileData> tileData = GetSpecialTileDataToCreate(swappedBoard, tilesToCheckPosition, new Vector2Int(fromX, fromY), new Vector2Int(toX, toY));
+        while (ProcessingMatches(swappedBoard,out List<Vector2Int> matchedTiles))
         {
-            List<Vector2Int> matchedTilesList = ConvertMatchTilesGroupToList(matchedTilesGroups);
-            List<TileType> groupsTileType = GetGroupsTileType(swappedBoard,matchedTilesGroups);
-            matchedTilesList =  ActivateTileEffect(swappedBoard,matchedTilesList);
-            BoardService.CleanTilesByPosition(swappedBoard,matchedTilesList);
-            List<AddedTileInfo> specialTiles = ProcessSpecialTile(swappedBoard,groupsTileType,matchedTilesGroups, new Vector2Int(fromX,fromY),new Vector2Int(toX,toY));
-            List<MovedTileInfo> movedTilesList = BoardService.DropTiles(swappedBoard,matchedTilesList,specialTiles);
+            matchedTiles = ActivateTileEffect(swappedBoard,matchedTiles);
+            BoardService.CleanTilesByPosition(swappedBoard,matchedTiles);
+            List<AddedTileInfo> specialTiles = ProcessSpecialTile(swappedBoard,tileData,tilesToCheckPosition, new Vector2Int(fromX,fromY),new Vector2Int(toX,toY));
+            List<MovedTileInfo> movedTilesList = BoardService.DropTiles(swappedBoard,matchedTiles,specialTiles);
             List<AddedTileInfo> addedTiles = BoardService.FillEmptySpaces(swappedBoard);
-            IncreaseScore(matchedTilesList.Count);
+            IncreaseScore(matchedTiles.Count);
             
             BoardSequence sequence = new BoardSequence
             {
-                matchedPosition = matchedTilesList,
+                matchedPosition = matchedTiles,
                 movedTiles = movedTilesList,
                 addedTiles = addedTiles,
                 specialTiles =  specialTiles,
@@ -50,56 +51,48 @@ public class GameController
         BoardService.UpdateBoard(swappedBoard);
         return boardSequences;
     }
-    
-    private bool ProcessingMatches(List<List<Tile>> board, out List<List<Vector2Int>> matchedTileGroups)
+
+    private List<TileData> GetSpecialTileDataToCreate(List<List<Tile>> board, List<Vector2Int> tilesToCheck, Vector2Int from, Vector2Int to)
     {
-        matchedTileGroups = BoardService.GetMatchesGroups(board,matchSize);
-        HashSet<Vector2Int> test = BoardService.GetMatchesPosition(false, board);
-        int index = 0;
-        foreach (var group in matchedTileGroups)
+        Dictionary<Vector2Int, Tile> tileSet = BoardService.GetTileInfoByPosition(board,tilesToCheck);
+        SwapDirection swapDirection = (to - from).x == 0 ? SwapDirection.Vertical : SwapDirection.Horizontal;
+        return _tileManager.CheckForSpecialTilesByPriority(board,matchSize,tileSet,swapDirection);
+    }
+    
+    private bool ProcessingMatches(List<List<Tile>> board, out List<Vector2Int> matchedTiles)
+    {
+        matchedTiles = BoardService.GetMatchesPosition(board,matchSize).ToList();
+        Debug.Log("<color=yellow> ------------------------------------------------ </color>");
+        foreach (var group in matchedTiles)
         {
-            index++;
-            Debug.Log($"<color=red> GROUP {index} </color>");
-            foreach (var gElement in group)
-            {
-                Debug.Log($"<color=orange> GROUP ELEMENT: {gElement} </color>");
-            }
-        }
-        Debug.Log("------------------------------------------------");
-        foreach (var position in test)
-        {
-            Debug.Log($"<color=orange> POSITION: {position} </color>");
+            Debug.Log($"<color=orange> GROUP ELEMENT: {group} </color>");
         }
         Debug.Log("<color=yellow> ------------------------------------------------ </color>");
-        return matchedTileGroups.Count > 0;
+        return matchedTiles.Count > 0;
     }
 
-    private List<AddedTileInfo> ProcessSpecialTile(List<List<Tile>> board,List<TileType> groupTileTypes, List<List<Vector2Int>> matchedTilesGroups,  Vector2Int from, Vector2Int to)
+    private List<AddedTileInfo> ProcessSpecialTile(List<List<Tile>> board,List<TileData> specialTileData, List<Vector2Int> matchedTiles,  Vector2Int from, Vector2Int to)
     {
         List<AddedTileInfo> addedTileInfos = new List<AddedTileInfo>();
-        for (int i = 0; i < matchedTilesGroups.Count; i++)
+        foreach (var tileData in specialTileData)
         {
-            SwapDirection swapDirection = (to - from).x == 0 ? SwapDirection.Vertical : SwapDirection.Horizontal;
-            TileData? specialTileData = _tileManager.CheckForSpecialTilesByPriority(matchedTilesGroups[i], groupTileTypes[i],swapDirection);
-            if (specialTileData != null)
+            Vector2Int specialTilePosition = default;
+            if (matchedTiles.Contains(from))
             {
-                Vector2Int specialTilePosition = default;
-                if (matchedTilesGroups[i].Contains(from))
-                {
-                    specialTilePosition = board[from.y][from.x].Id == -1 ? from : BoardService.GetClosestFreeNeighborPosition(board, from);
-                }
-                else if (matchedTilesGroups[i].Contains(to))
-                {
-                    specialTilePosition = board[to.y][to.x].Id == -1 ? to : BoardService.GetClosestFreeNeighborPosition(board, to);
-                }
-                BoardService.SetTileAtSpecificPlace(board, specialTilePosition, specialTileData.Value);
-                addedTileInfos.Add(new AddedTileInfo
-                {
-                    position = specialTilePosition,
-                    data = specialTileData.Value
-                });
+                specialTilePosition = board[from.y][from.x].Id == -1 ? from : BoardService.GetClosestFreeNeighborPosition(board, from);
             }
+            else if (matchedTiles.Contains(to))
+            {
+                specialTilePosition = board[to.y][to.x].Id == -1 ? to : BoardService.GetClosestFreeNeighborPosition(board, to);
+            }
+            BoardService.SetTileAtSpecificPlace(board, specialTilePosition, tileData);
+            addedTileInfos.Add(new AddedTileInfo
+            {
+                position = specialTilePosition,
+                data = tileData
+            });
         }
+        specialTileData.Clear();
         return addedTileInfos;
     }
     
@@ -118,40 +111,19 @@ public class GameController
             HashSet<Vector2Int> tiles = board[tilePosition.y][tilePosition.x].ApplyEffect(board, tilePosition);
             affectedTiles.UnionWith(tiles);
         }
+
+        if (affectedTiles.Count <= 0)
+        {
+            return matchedTilesPosition;
+        }
+        
         affectedTiles.UnionWith(matchedTilesPosition);
         List<Vector2Int> sortedAffectedTiles = affectedTiles.ToList();
         sortedAffectedTiles.Sort((a, b) =>
         {
-            if (a.y != b.y) return a.y.CompareTo(b.y); // Ordena primeiro por y
-            return a.x.CompareTo(b.x); // Se y for o mesmo, ordena por x
+            if (a.y != b.y) return a.y.CompareTo(b.y);
+            return a.x.CompareTo(b.x);
         });
         return sortedAffectedTiles;
-    }
-    private List<TileType> GetGroupsTileType(List<List<Tile>> board, List<List<Vector2Int>> matchedTilesGroups)
-    {
-        List<TileType> tileTypes = new List<TileType>();
-        foreach (var group in matchedTilesGroups)
-        {
-            Vector2Int tilePosition = group[0];
-            TileType groupType = board[tilePosition.y][tilePosition.x].Type;
-            tileTypes.Add(groupType);
-        }
-        return tileTypes;
-    }
-    
-    private List<Vector2Int> ConvertMatchTilesGroupToList(List<List<Vector2Int>> matchedTilesGroups)
-    {
-        List<Vector2Int> matchTilesPositions = new List<Vector2Int>();
-        foreach (var group in matchedTilesGroups)
-        {
-            foreach (var tilePosition in group)
-            {
-                if (!matchTilesPositions.Contains(tilePosition))
-                {
-                    matchTilesPositions.Add(tilePosition);
-                }
-            }
-        }
-        return matchTilesPositions;
     }
 }
