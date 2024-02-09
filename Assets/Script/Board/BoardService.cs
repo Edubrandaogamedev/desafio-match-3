@@ -23,6 +23,16 @@ public static class BoardService
         (newBoard[fromY][fromX], newBoard[toY][toX]) = (newBoard[toY][toX], newBoard[fromY][fromX]);
         return newBoard;
     }
+
+    public static Dictionary<Vector2Int,Tile> GetTileInfoByPosition(List<List<Tile>> board, List<Vector2Int> positionSet)
+    {
+        Dictionary<Vector2Int,Tile> tileSet = new Dictionary<Vector2Int,Tile>();
+        foreach (var position in positionSet)
+        {
+            tileSet[position] = board[position.y][position.x];
+        }
+        return tileSet;
+    }
     
     public static void UpdateBoard(List<List<Tile>> newBoardTiles)
     {
@@ -86,10 +96,47 @@ public static class BoardService
         return horizontalGroup.Count >= matchSize || verticalGroup.Count >= matchSize;
     }
     
-    public static HashSet<Vector2Int> GetMatchesPosition(bool self,List<List<Tile>> boardToCheck = null)
+    public static HashSet<Vector2Int> GetMatchesPosition(List<List<Tile>> board, int matchSize)
     {
-        return self ? GetMatchesPosition(BoardTiles) : GetMatchesPosition(boardToCheck);
+        HashSet<Vector2Int> matchedTilesPosition = new HashSet<Vector2Int>();
+        int width = board[0].Count;
+        int height = board.Count;
+        bool[,] visited = new bool[height, width];
+        
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (visited[y, x])
+                {
+                    continue;
+                }
+                
+                HashSet<Vector2Int> horizontalGroup = new HashSet<Vector2Int>();
+                SearchMatchesOnDirection(board,new Vector2Int(x, y), horizontalGroup, Vector2Int.right,width,visited);
+                SearchMatchesOnDirection(board,new Vector2Int(x, y), horizontalGroup, Vector2Int.left,width,visited);
+                if (horizontalGroup.Count >= matchSize)
+                {
+                    matchedTilesPosition.UnionWith(horizontalGroup);
+                }
+                
+                HashSet<Vector2Int> verticalGroup = new HashSet<Vector2Int>();
+                SearchMatchesOnDirection(board,new Vector2Int(x, y), verticalGroup, Vector2Int.down,height,visited);
+                SearchMatchesOnDirection(board,new Vector2Int(x, y), verticalGroup, Vector2Int.up,height,visited);
+                if (verticalGroup.Count >= matchSize)
+                {
+                    matchedTilesPosition.UnionWith(verticalGroup);
+                }
+            }
+        }
+        matchedTilesPosition.ToList().Sort((a, b) =>
+        {
+            if (a.y != b.y) return a.y.CompareTo(b.y);
+            return a.x.CompareTo(b.x);
+        });
+        return matchedTilesPosition;
     }
+    
 
     public static List<MovedTileInfo> DropTiles(List<List<Tile>> board, List<Vector2Int> matchedTilesGroup, List<AddedTileInfo> exceptionTiles)
     {
@@ -148,71 +195,8 @@ public static class BoardService
         }
         return addedTiles;
     }
-    
-    private static HashSet<Vector2Int> GetMatchesPosition(List<List<Tile>> boardToCheck = null)
-    {
-        HashSet<Vector2Int> matchesPositions = new HashSet<Vector2Int>();
-        for (int y = 0; y < boardToCheck.Count; y++)
-        {
-            for (int x = 0; x < boardToCheck[y].Count; x++)
-            {
-                //Keep the position in this order, to avoid bugging the DoTween Sequence
-                if (x > 1 && boardToCheck[y][x].Type == boardToCheck[y][x - 1].Type && boardToCheck[y][x - 1].Type == boardToCheck[y][x - 2].Type)
-                {
-                    matchesPositions.Add(new Vector2Int(x-2,y));
-                    matchesPositions.Add(new Vector2Int(x-1,y));
-                    matchesPositions.Add(new Vector2Int(x,y));
-                }
-                if (y > 1 && boardToCheck[y][x].Type == boardToCheck[y - 1][x].Type && boardToCheck[y - 1][x].Type == boardToCheck[y - 2][x].Type)
-                {
-                    matchesPositions.Add(new Vector2Int(x,y-2));
-                    matchesPositions.Add(new Vector2Int(x,y-1));
-                    matchesPositions.Add(new Vector2Int(x,y));
-                }
-            }
-        }
-        return matchesPositions;
-    }
-    
-    public static List<List<Vector2Int>> GetMatchesGroups(List<List<Tile>> boardToCheck,int matchSize)
-    {
-        List<List<Vector2Int>> matchesGroups = new List<List<Vector2Int>>();
-        int width = boardToCheck[0].Count;
-        int height = boardToCheck.Count;
-        bool[,] visited = new bool[height, width];
-        
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                if (visited[y, x])
-                {
-                    continue;
-                }
-                
-                HashSet<Vector2Int> horizontalGroup = new HashSet<Vector2Int>();
-                SearchMatchesOnDirection(boardToCheck,new Vector2Int(x, y), horizontalGroup, Vector2Int.right,width,visited);
-                SearchMatchesOnDirection(boardToCheck,new Vector2Int(x, y), horizontalGroup, Vector2Int.left,width,visited);
-                if (horizontalGroup.Count >= matchSize)
-                {
-                    List<Vector2Int> sortedHorizontalGroup = horizontalGroup.OrderBy(pos => pos.x).ToList();
-                    matchesGroups.Add(sortedHorizontalGroup);
-                }
-                
-                HashSet<Vector2Int> verticalGroup = new HashSet<Vector2Int>();
-                SearchMatchesOnDirection(boardToCheck,new Vector2Int(x, y), verticalGroup, Vector2Int.down,height,visited);
-                SearchMatchesOnDirection(boardToCheck,new Vector2Int(x, y), verticalGroup, Vector2Int.up,height,visited);
-                if (verticalGroup.Count >= matchSize)
-                {
-                    List<Vector2Int> sortedVerticalGroup = verticalGroup.OrderBy(position => position.y).ToList();
-                    matchesGroups.Add(new List<Vector2Int>(sortedVerticalGroup));
-                }
-            }
-        }
-        return matchesGroups;
-    }
-    
-    private static void SearchMatchesOnDirection(List<List<Tile>> boardToCheck, Vector2Int startPos, HashSet<Vector2Int> matchGroup, Vector2Int direction, int directionSize, bool[,] visited = null)
+
+    public static void SearchMatchesOnDirection(List<List<Tile>> boardToCheck, Vector2Int startPos, HashSet<Vector2Int> matchGroup, Vector2Int direction, int directionSize, bool[,] visited = null)
     {
         int width = boardToCheck[0].Count;
         int height = boardToCheck.Count;

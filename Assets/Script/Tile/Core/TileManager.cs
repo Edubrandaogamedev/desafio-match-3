@@ -56,25 +56,17 @@ public class TileManager : MonoBehaviour
         return null;
     }
     
-    public TileData? CheckForSpecialTilesByPriority(List<Vector2Int> tilesPositionSet, TileType type, SwapDirection swapDirection)
+    public List<TileData> CheckForSpecialTilesByPriority(List<List<Tile>> board,int matchSize, Dictionary<Vector2Int,Tile> tilesPositionSet, SwapDirection swapDirection)
     {
-        TileData? specialTileData = null;
-        int highestPriority = -1;
+        List<TileData> specialTileData = new List<TileData>();
         foreach (var strategy in specialTileSpawnStrategies)
         {
-            if (strategy.Priority < highestPriority)
-            {
-                continue;
-            }
 
-            if (!strategy.ShouldSpawnSpecialTile(tilesPositionSet,swapDirection))
+            if (!strategy.ShouldSpawnSpecialTile(board,matchSize,tilesPositionSet,swapDirection))
             {
                 continue;
             }
-            
-            //Same priority strategy should be "independent", like vertical and horizontal match4 never be on the same group
-            highestPriority = strategy.Priority;
-            specialTileData = GetTileDataByEffectAndKey(type, strategy.TileEffect); //wont be null and if happens, it's better to have an error than keep it silenced dealing with null
+            specialTileData.Add(GetTileDataByEffectAndKey(strategy.TileType, strategy.TileEffect).Value);
         }
         return specialTileData;
     }

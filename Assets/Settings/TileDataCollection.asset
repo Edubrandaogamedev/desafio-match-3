@@ -85,3 +85,27 @@ MonoBehaviour:
     type: 6
     effects: 2
     sprite: {fileID: -2542488484110685575, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_blue
+    type: 1
+    effects: 4
+    sprite: {fileID: -393380713842846705, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_green
+    type: 2
+    effects: 4
+    sprite: {fileID: -7516536292592786781, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_orange
+    type: 3
+    effects: 4
+    sprite: {fileID: 1537299229063919381, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_white
+    type: 4
+    effects: 4
+    sprite: {fileID: -1567817312370920673, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_red
+    type: 5
+    effects: 4
+    sprite: {fileID: 666894837039678134, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
+  - key: tile_special_explosive_yellow
+    type: 6
+    effects: 4
+    sprite: {fileID: 39724412523307875, guid: 7aee13bfbfde0f54e900e8bd82fbc689, type: 3}
