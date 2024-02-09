@@ -5,21 +5,9 @@ public class ClearColumnTileSpawnStrategy : ISpecialTileSpawnStrategy
 {
     public int Priority => 1;
     public TileEffect TileEffect => TileEffect.Special_Clear_Column;
-    public bool ShouldSpawnSpecialTile(List<Vector2Int> matchedTilesPositions)
-    {
-        return matchedTilesPositions.Count >= 4 && CheckDirection(matchedTilesPositions);
-    }
 
-    private bool CheckDirection(List<Vector2Int> matchedTiles)
+    public bool ShouldSpawnSpecialTile(List<Vector2Int> matchedTilesPositions, SwapDirection swapDirection)
     {
-        int firstX = matchedTiles[0].x;
-        foreach (var tile in matchedTiles)
-        {
-            if (tile.x != firstX)
-            {
-                return false;
-            }
-        }
-        return true;
+        return matchedTilesPositions.Count >= 4 && swapDirection == SwapDirection.Vertical;
     }
 }
