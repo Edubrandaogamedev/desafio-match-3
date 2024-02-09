@@ -56,7 +56,7 @@ public class TileManager : MonoBehaviour
         return null;
     }
     
-    public TileData? CheckForSpecialTilesByPriority(List<Vector2Int> tilesPositionSet, TileType type)
+    public TileData? CheckForSpecialTilesByPriority(List<Vector2Int> tilesPositionSet, TileType type, SwapDirection swapDirection)
     {
         TileData? specialTileData = null;
         int highestPriority = -1;
@@ -67,7 +67,7 @@ public class TileManager : MonoBehaviour
                 continue;
             }
 
-            if (!strategy.ShouldSpawnSpecialTile(tilesPositionSet))
+            if (!strategy.ShouldSpawnSpecialTile(tilesPositionSet,swapDirection))
             {
                 continue;
             }

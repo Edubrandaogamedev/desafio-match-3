@@ -148,7 +148,7 @@ public static class BoardService
         }
         return addedTiles;
     }
-
+    
     private static HashSet<Vector2Int> GetMatchesPosition(List<List<Tile>> boardToCheck = null)
     {
         HashSet<Vector2Int> matchesPositions = new HashSet<Vector2Int>();
